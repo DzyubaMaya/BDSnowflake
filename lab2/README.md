@@ -1,6 +1,5 @@
 # Лабораторная работа №2 (обязательная часть) — ETL на PySpark + ClickHouse
 
-## Что поднимаем
 
 - `db` (PostgreSQL): staging `mock_data` + модель **звезда** в схеме `star`
 - `spark` (PySpark): 2 ETL-джобы
@@ -20,7 +19,7 @@ docker-compose ps
   - автоматически init-скриптами Postgres (`sql/init/`) при первом запуске на пустом томе
   - или **через Spark**: job1 читает CSV из `data/` и перезаписывает `public.mock_data`
 
-Если нужно полностью пересоздать БД и заново залить данные init-скриптами, используй:
+Если нужно полностью пересоздать БД и заново залить данные init-скриптами:
 
 ```bash
 docker-compose down -v
@@ -66,7 +65,7 @@ docker-compose exec -T clickhouse clickhouse-client -q "SELECT * FROM reports.re
 
 Подключение к ClickHouse с хоста (DBeaver): HTTP `8123`, native `9000`, user `lab`, password `lab`, DB `reports`.
 
-Примечание: отчёты формируются через единый `fact_enriched` (join факта с измерениями) и содержат ранги (`sales_rank`, `customer_rank`, `store_rank`, `supplier_rank`, `rating_rank_*`, `reviews_rank`), как в типовом решении.
+Примечание: отчёты формируются через единый `fact_enriched` (join факта с измерениями) и содержат ранги (`sales_rank`, `customer_rank`, `store_rank`, `supplier_rank`, `rating_rank_*`, `reviews_rank`).
 
 ## 5) Готовые проверки (checks)
 

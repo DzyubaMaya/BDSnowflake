@@ -1,29 +1,25 @@
--- Лаба 2 — проверки Postgres (staging + модель star)
--- Запуск:
 --   docker-compose exec -T db psql -U lab -d snowflake_lab -f - < sql/lab2/03_postgres_checks.sql
 
 -- 1) Базовые количества
 SELECT 'mock_data' AS table_name, COUNT(*) AS cnt FROM public.mock_data;
 SELECT 'star.fact_sales' AS table_name, COUNT(*) AS cnt FROM star.fact_sales;
 
--- 2) Проверка: не потеряли строки при переносе в факт (ожидается 0)
+-- 2) Проверка: не потеряли строки при переносе в факт
 SELECT COUNT(*) AS lost_rows
 FROM public.mock_data m
 LEFT JOIN star.fact_sales f ON f.source_row_id = m.row_id
 WHERE f.source_row_id IS NULL;
 
--- 3) Проверка: суммы в staging и в факте совпадают (или очень близки)
+-- 3) Проверка: суммы в staging и в факте совпадают 
 SELECT
   ROUND((SELECT SUM(sale_total_price::numeric) FROM public.mock_data)::numeric, 2) AS sum_total_staging,
   ROUND((SELECT SUM(total_price) FROM star.fact_sales)::numeric, 2)                 AS sum_total_fact;
 
--- 4) Проверка: ключи факта не NULL (ожидается 0 для обязательных ссылок)
+-- 4) Проверка: ключи факта не NULL 
 SELECT COUNT(*) AS null_date_key     FROM star.fact_sales WHERE date_key IS NULL;
 SELECT COUNT(*) AS null_customer_id  FROM star.fact_sales WHERE customer_id IS NULL;
 SELECT COUNT(*) AS null_seller_id    FROM star.fact_sales WHERE seller_id IS NULL;
 SELECT COUNT(*) AS null_product_id   FROM star.fact_sales WHERE product_id IS NULL;
--- store_id может быть NULL, если в исходных данных по магазину есть NULL/пустые поля,
--- и join по набору полей не нашёл соответствие в dim_store.
 SELECT COUNT(*) AS null_store_id     FROM star.fact_sales WHERE store_id IS NULL;
 SELECT COUNT(*) AS null_supplier_id  FROM star.fact_sales WHERE supplier_id IS NULL;
 

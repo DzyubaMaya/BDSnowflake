@@ -162,20 +162,19 @@ def main():
         null_if_blank("supplier_country").alias("supplier_country"),
     )
 
-    # чистим staging и заливаем заново (row_id заполнится дефолтом BIGSERIAL)
+   
     jvm = spark._sc._gateway.jvm
     jvm.java.lang.Class.forName("org.postgresql.Driver")
     conn = jvm.java.sql.DriverManager.getConnection(pg_url, pg_user, pg_pass)
     stmt = conn.createStatement()
     stmt.execute("TRUNCATE TABLE public.mock_data RESTART IDENTITY")
-    # чистим звезду одним TRUNCATE CASCADE, чтобы не ловить FK-ошибки
     stmt.execute("TRUNCATE TABLE star.fact_sales, star.dim_date, star.dim_customer, star.dim_seller, star.dim_product, star.dim_store, star.dim_supplier CASCADE")
     stmt.close()
     conn.close()
 
     df.write.jdbc(pg_url, "public.mock_data", mode="append", properties=pg_props)
 
-    # читаем обратно, чтобы получить row_id (surrogate) и работать как раньше
+   
     mock = spark.read.jdbc(pg_url, "public.mock_data", properties=pg_props)
 
     mock = mock.withColumn(
@@ -199,7 +198,7 @@ def main():
     )
 
   
-    # dim_customer (ключ = sale_customer_id из источника)
+    # dim_customer 
     w_cust = Window.partitionBy(F.col("sale_customer_id")).orderBy(F.col("row_id"))
     dim_customer = (
         mock.where(F.col("sale_customer_id").isNotNull())
@@ -293,8 +292,7 @@ def main():
         "store_email",
     ]
 
-    # Важно: join по колонкам с NULL не матчится (NULL != NULL),
-    # поэтому для ключевых полей магазина подставляем одинаковую заглушку.
+   
     store_key_exprs = [F.coalesce(F.col(c), F.lit("N/A")).alias(c) for c in store_key_cols]
     w_store = Window.orderBy(*[F.col(c).asc_nulls_last() for c in store_key_cols])
     dim_store = (

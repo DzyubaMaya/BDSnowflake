@@ -1,5 +1,3 @@
--- Лаба 2 — проверки ClickHouse (6 отчётов)
--- Запуск:
 --   docker-compose exec -T clickhouse clickhouse-client -q "$(cat sql/lab2/04_clickhouse_checks.sql)"
 
 -- 1) Количество строк в каждой таблице отчёта (должно быть > 0)

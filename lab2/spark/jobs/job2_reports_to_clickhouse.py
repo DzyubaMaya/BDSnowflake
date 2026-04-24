@@ -54,9 +54,7 @@ def main():
 
     na = F.lit("N/A")
 
-    # -----------------------
-    # Обогащённый факт (как у подружки): один широкий DF
-    # -----------------------
+
     fact_enriched = (
         fact.alias("f")
         .join(dim_customer.alias("c"), on="customer_id", how="left")
