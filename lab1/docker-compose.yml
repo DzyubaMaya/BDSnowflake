@@ -1,8 +1,8 @@
 services:
   db:
     build: .
-    image: bdsnowflake-db:local
-    container_name: bdsnowflake_db
+    image: bdsnowflake-lab1-db:local
+    container_name: bdsnowflake_lab1_db
     environment:
       POSTGRES_USER: lab
       POSTGRES_PASSWORD: lab
@@ -10,7 +10,8 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - lab1_postgres_data:/var/lib/postgresql/data
 
 volumes:
-  postgres_data:
+  lab1_postgres_data:
+

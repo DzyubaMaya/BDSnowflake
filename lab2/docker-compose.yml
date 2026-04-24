@@ -1,0 +1,54 @@
+services:
+  db:
+    build: .
+    image: bdsnowflake-lab2-db:local
+    container_name: bdsnowflake_lab2_db
+    environment:
+      POSTGRES_USER: lab
+      POSTGRES_PASSWORD: lab
+      POSTGRES_DB: snowflake_lab
+    ports:
+      - "5432:5432"
+    volumes:
+      - lab2_postgres_data:/var/lib/postgresql/data
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.8
+    container_name: bdsnowflake_lab2_clickhouse
+    environment:
+      CLICKHOUSE_DB: reports
+      CLICKHOUSE_USER: lab
+      CLICKHOUSE_PASSWORD: lab
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: "1"
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    volumes:
+      - lab2_clickhouse_data:/var/lib/clickhouse
+
+  spark:
+    build:
+      context: .
+      dockerfile: spark/Dockerfile
+    image: bdsnowflake-lab2-spark:local
+    container_name: bdsnowflake_lab2_spark
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: snowflake_lab
+      POSTGRES_USER: lab
+      POSTGRES_PASSWORD: lab
+      CLICKHOUSE_HOST: clickhouse
+      CLICKHOUSE_PORT: "8123"
+      CLICKHOUSE_DB: reports
+      CLICKHOUSE_USER: lab
+      CLICKHOUSE_PASSWORD: lab
+    depends_on:
+      - db
+      - clickhouse
+    command: ["bash", "-lc", "sleep infinity"]
+
+volumes:
+  lab2_postgres_data:
+  lab2_clickhouse_data:
+
