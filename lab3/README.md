@@ -314,7 +314,7 @@ LIMIT 10;
 
 ---
 
-## 📈 Аналитические запросы
+##  Аналитические запросы
 
 В [`postgres/checks/01_checks.sql`](postgres/checks/01_checks.sql) реализованы следующие аналитические витрины:
 
@@ -349,7 +349,7 @@ LIMIT 10;
 
 ---
 
-## ⚙ Устройство Flink-приложения
+## Устройство Flink-приложения
 
 Flink-приложение находится в [`flink-job/src/main/java/ru/bdsnowflake/lab3/`](flink-job/src/main/java/ru/bdsnowflake/lab3/).
 
@@ -376,7 +376,7 @@ Flink-приложение находится в [`flink-job/src/main/java/ru/bd
 
 ---
 
-## 📸 Демонстрация работы
+## Демонстрация работы
 
 ### Flink UI — Running Jobs
 ![Running Jobs](screenshots/1.png)
