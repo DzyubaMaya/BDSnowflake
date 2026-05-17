@@ -24,6 +24,7 @@ import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.HexFormat;
 import java.util.Locale;
+import java.util.Objects;
 
 public class PetShopStreamingJob {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
@@ -59,11 +60,13 @@ public class PetShopStreamingJob {
 
         DataStream<PetType> petTypeStream = rawEvents
                 .map(PetType::fromEvent, TypeInformation.of(PetType.class))
-                .returns(TypeInformation.of(new TypeHint<PetType>() {}));
+                .returns(TypeInformation.of(new TypeHint<PetType>() {}))
+                .filter(Objects::nonNull);
 
         DataStream<PetBreed> petBreedStream = rawEvents
                 .map(PetBreed::fromEvent, TypeInformation.of(PetBreed.class))
-                .returns(TypeInformation.of(new TypeHint<PetBreed>() {}));
+                .returns(TypeInformation.of(new TypeHint<PetBreed>() {}))
+                .filter(Objects::nonNull);
 
         DataStream<Pet> petStream = rawEvents
                 .map(Pet::fromEvent, TypeInformation.of(Pet.class));
@@ -73,11 +76,13 @@ public class PetShopStreamingJob {
 
         DataStream<Category> categoryStream = rawEvents
                 .map(Category::fromEvent, TypeInformation.of(Category.class))
-                .returns(TypeInformation.of(new TypeHint<Category>() {}));
+                .returns(TypeInformation.of(new TypeHint<Category>() {}))
+                .filter(Objects::nonNull);
 
         DataStream<Brand> brandStream = rawEvents
                 .map(Brand::fromEvent, TypeInformation.of(Brand.class))
-                .returns(TypeInformation.of(new TypeHint<Brand>() {}));
+                .returns(TypeInformation.of(new TypeHint<Brand>() {}))
+                .filter(Objects::nonNull);
 
         DataStream<Product> productStream = rawEvents
                 .map(Product::fromEvent, TypeInformation.of(Product.class));

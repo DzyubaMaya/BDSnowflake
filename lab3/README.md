@@ -185,7 +185,11 @@ fact_sales ────┼── (customer_key, pet_key, seller_key, product_key
 
 ##  Как запустить
 
-Все команды выполняются из **корня репозитория** (рядом с [`docker-compose.yml`](docker-compose.yml)).
+Все команды выполняются из **каталога `lab3/`** (рядом с [`docker-compose.yml`](docker-compose.yml)), а не из корня монорепозитория `BDSnowflake/`.
+
+```bash
+cd lab3
+```
 
 Скрипты в [`scripts/`](scripts/) сами выбирают между `docker compose` (Compose V2) и `docker-compose` (классический бинарник). В инструкциях ниже используется `docker compose`; если у вас только `docker-compose`, замените соответственно.
 
@@ -203,8 +207,10 @@ chmod +x scripts/*.sh
 
 ### 2. Запуск инфраструктуры
 
+Сервис **`kafka-init`** один раз создаёт топик `petshop.sales.raw` (на случай, если авто‑создание топиков отключено у брокера).
+
 ```bash
-docker-compose up -d postgres kafka jobmanager taskmanager
+docker-compose up -d postgres kafka kafka-init jobmanager taskmanager
 ```
 
 Порядок важен: сервисы запускаются с учётом зависимостей (`depends_on` с `condition: service_healthy`).
@@ -257,10 +263,11 @@ Finished sending 10000 messages to topic 'petshop.sales.raw'
 #### Быстрая проверка
 
 ```bash
+cd lab3
 docker exec -i lab3-postgres psql -U pet_user -d pet_shop < postgres/checks/01_checks.sql
 ```
 
-Скрипт [`postgres/checks/01_checks.sql`](postgres/checks/01_checks.sql) выполняет 20 проверок:
+Скрипт [`postgres/checks/01_checks.sql`](postgres/checks/01_checks.sql) выполняет **17 SQL-проверок** (разделы 1.1–1.3, 2.1–2.10, 3.1–3.4):
 
 **Базовые проверки:**
 - количество строк во всех 12 таблицах;

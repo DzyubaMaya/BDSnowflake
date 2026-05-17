@@ -79,7 +79,11 @@ public record FactSale(
         } else {
             statement.setInt(8, record.saleQuantity);
         }
-        statement.setBigDecimal(9, record.saleTotalPrice);
+        if (record.saleTotalPrice == null) {
+            statement.setNull(9, java.sql.Types.NUMERIC);
+        } else {
+            statement.setBigDecimal(9, record.saleTotalPrice);
+        }
         statement.setString(10, record.customerKey);
         statement.setString(11, record.petKey);
         statement.setString(12, record.sellerKey);

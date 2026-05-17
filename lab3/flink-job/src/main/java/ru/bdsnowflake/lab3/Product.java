@@ -61,18 +61,30 @@ public record Product(
         statement.setString(3, record.name);
         statement.setString(4, record.categoryKey);
         statement.setString(5, record.brandKey);
-        statement.setBigDecimal(6, record.price);
+        if (record.price == null) {
+            statement.setNull(6, java.sql.Types.NUMERIC);
+        } else {
+            statement.setBigDecimal(6, record.price);
+        }
         if (record.quantity == null) {
             statement.setNull(7, java.sql.Types.INTEGER);
         } else {
             statement.setInt(7, record.quantity);
         }
-        statement.setBigDecimal(8, record.weight);
+        if (record.weight == null) {
+            statement.setNull(8, java.sql.Types.NUMERIC);
+        } else {
+            statement.setBigDecimal(8, record.weight);
+        }
         statement.setString(9, record.color);
         statement.setString(10, record.size);
         statement.setString(11, record.material);
         statement.setString(12, record.description);
-        statement.setBigDecimal(13, record.rating);
+        if (record.rating == null) {
+            statement.setNull(13, java.sql.Types.NUMERIC);
+        } else {
+            statement.setBigDecimal(13, record.rating);
+        }
         if (record.reviews == null) {
             statement.setNull(14, java.sql.Types.INTEGER);
         } else {

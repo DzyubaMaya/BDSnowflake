@@ -46,6 +46,28 @@ services:
       timeout: 10s
       retries: 12
 
+  kafka-init:
+    image: apache/kafka:3.9.2
+    container_name: lab3-kafka-init
+    depends_on:
+      kafka:
+        condition: service_healthy
+    entrypoint: ["/opt/kafka/bin/kafka-topics.sh"]
+    command:
+      [
+        "--bootstrap-server",
+        "kafka:19092",
+        "--create",
+        "--if-not-exists",
+        "--topic",
+        "petshop.sales.raw",
+        "--partitions",
+        "3",
+        "--replication-factor",
+        "1",
+      ]
+    restart: "no"
+
   jobmanager:
     image: flink:1.20.1-scala_2.12-java17
     container_name: lab3-flink-jobmanager
@@ -58,6 +80,8 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
+      kafka-init:
+        condition: service_completed_successfully
       postgres:
         condition: service_healthy
     volumes:
@@ -89,6 +113,8 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
+      kafka-init:
+        condition: service_completed_successfully
 
   # Build JAR via image build (COPY) — надёжнее bind mount ./flink-job на macOS/Colima.
   flink-build:
