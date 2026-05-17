@@ -1,5 +1,3 @@
--- Lab4: quick sanity checks runnable in Trino.
-
 SELECT 'pg_mock_data'    AS what, COUNT(*) AS rows FROM postgresql.public.mock_data
 UNION ALL
 SELECT 'ch_mock_data'    AS what, COUNT(*) AS rows FROM clickhouse.staging.mock_data

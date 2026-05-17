@@ -1,6 +1,3 @@
--- Lab4: datamarts in ClickHouse (6 тем задания; часть тем — основная таблица + срез).
--- Дополнительно: годовые агрегаты, сравнение с предыдущим месяцем, корреляция рейтинг–продажи.
-
 CREATE SCHEMA IF NOT EXISTS clickhouse.reports;
 
 DROP TABLE IF EXISTS clickhouse.reports.report_products;

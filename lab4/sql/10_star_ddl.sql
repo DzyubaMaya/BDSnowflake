@@ -1,6 +1,3 @@
--- Lab4: create star-schema target in ClickHouse via Trino.
--- Keys in ORDER BY must be NOT NULL (ClickHouse MergeTree default).
-
 CREATE SCHEMA IF NOT EXISTS clickhouse.star;
 
 DROP TABLE IF EXISTS clickhouse.star.fact_sales;

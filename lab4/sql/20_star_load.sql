@@ -1,10 +1,3 @@
--- Lab4: ETL via Trino. Union staging from postgresql + clickhouse, then
--- materialize dimensions and the fact table in clickhouse.star.
-
--- ------------------------------------------------------------------
--- step 1: materialize a unified staging table in ClickHouse so the
--- heavy network read from PostgreSQL is only done once.
--- ------------------------------------------------------------------
 DROP TABLE IF EXISTS clickhouse.star.stg_unioned;
 
 CREATE TABLE clickhouse.star.stg_unioned (
@@ -98,9 +91,6 @@ SELECT
   supplier_city, supplier_country
 FROM clickhouse.staging.mock_data;
 
--- ------------------------------------------------------------------
--- dim_date
--- ------------------------------------------------------------------
 INSERT INTO clickhouse.star.dim_date
 SELECT
   CAST(year(d) * 10000 + month(d) * 100 + day(d) AS INTEGER) AS date_key,
@@ -116,9 +106,6 @@ FROM (
   WHERE sale_date IS NOT NULL AND sale_date <> ''
 );
 
--- ------------------------------------------------------------------
--- dim_customer
--- ------------------------------------------------------------------
 INSERT INTO clickhouse.star.dim_customer
 SELECT
   CAST(sale_customer_id AS INTEGER) AS customer_id,
@@ -142,9 +129,6 @@ FROM (
 )
 WHERE rn = 1;
 
--- ------------------------------------------------------------------
--- dim_seller
--- ------------------------------------------------------------------
 INSERT INTO clickhouse.star.dim_seller
 SELECT
   CAST(sale_seller_id AS INTEGER) AS seller_id,
@@ -163,9 +147,6 @@ FROM (
 )
 WHERE rn = 1;
 
--- ------------------------------------------------------------------
--- dim_product
--- ------------------------------------------------------------------
 INSERT INTO clickhouse.star.dim_product
 SELECT
   CAST(sale_product_id AS INTEGER) AS product_id,
@@ -195,9 +176,6 @@ FROM (
 )
 WHERE rn = 1;
 
--- ------------------------------------------------------------------
--- dim_store  (synthetic key)
--- ------------------------------------------------------------------
 INSERT INTO clickhouse.star.dim_store
 SELECT
   CAST(ROW_NUMBER() OVER (ORDER BY store_name, store_location, store_city,
@@ -217,9 +195,6 @@ FROM (
   FROM clickhouse.star.stg_unioned
 );
 
--- ------------------------------------------------------------------
--- dim_supplier  (synthetic key)
--- ------------------------------------------------------------------
 INSERT INTO clickhouse.star.dim_supplier
 SELECT
   CAST(ROW_NUMBER() OVER (ORDER BY supplier_name, supplier_contact, supplier_email,
@@ -239,9 +214,6 @@ FROM (
   FROM clickhouse.star.stg_unioned
 );
 
--- ------------------------------------------------------------------
--- fact_sales
--- ------------------------------------------------------------------
 INSERT INTO clickhouse.star.fact_sales
 SELECT
   CAST(ROW_NUMBER() OVER (ORDER BY u.src, u.row_id_raw) AS BIGINT) AS sale_key,

@@ -1,8 +1,3 @@
--- Lab4: populate datamarts from clickhouse.star.* via Trino.
-
--- ====================================================================
--- 1. Sales by Products
--- ====================================================================
 INSERT INTO clickhouse.reports.report_products
 SELECT
   p.product_id,
@@ -31,9 +26,6 @@ FROM clickhouse.star.fact_sales f
 JOIN clickhouse.star.dim_product p ON f.product_id = p.product_id
 GROUP BY COALESCE(p.category, 'N/A');
 
--- ====================================================================
--- 2. Sales by Customers
--- ====================================================================
 INSERT INTO clickhouse.reports.report_customers
 SELECT
   c.customer_id,
@@ -59,9 +51,6 @@ FROM clickhouse.star.fact_sales f
 JOIN clickhouse.star.dim_customer c ON f.customer_id = c.customer_id
 GROUP BY COALESCE(c.country, 'N/A');
 
--- ====================================================================
--- 3. Sales over Time (monthly + yearly + MoM comparison)
--- ====================================================================
 INSERT INTO clickhouse.reports.report_time
 SELECT
   d.year,
@@ -112,9 +101,6 @@ LEFT JOIN monthly p
     OR (y.month = 1 AND p.year = y.year - 1 AND p.month = 12)
   );
 
--- ====================================================================
--- 4. Sales by Stores
--- ====================================================================
 INSERT INTO clickhouse.reports.report_stores
 SELECT
   s.store_id,
@@ -140,9 +126,6 @@ FROM clickhouse.star.fact_sales f
 JOIN clickhouse.star.dim_store s ON f.store_id = s.store_id
 GROUP BY COALESCE(s.store_country, 'N/A'), COALESCE(s.store_city, 'N/A');
 
--- ====================================================================
--- 5. Sales by Suppliers (avg unit in sales + avg list price from dim_product)
--- ====================================================================
 INSERT INTO clickhouse.reports.report_suppliers
 SELECT
   sp.supplier_id,
@@ -169,9 +152,6 @@ FROM clickhouse.star.fact_sales f
 JOIN clickhouse.star.dim_supplier sp ON f.supplier_id = sp.supplier_id
 GROUP BY COALESCE(sp.supplier_country, 'N/A');
 
--- ====================================================================
--- 6. Product Quality + Pearson correlation (rating vs qty / revenue)
--- ====================================================================
 INSERT INTO clickhouse.reports.report_quality
 SELECT
   p.product_id,

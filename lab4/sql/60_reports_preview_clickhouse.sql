@@ -1,9 +1,3 @@
--- Превью витрин в ClickHouse.
--- Запуск из каталога lab4 на хосте (путь к файлу на твоей машине):
---   docker-compose exec -T clickhouse clickhouse-client -u lab --password lab \
---     --multiquery < sql/60_reports_preview_clickhouse.sql
--- Либо скопируй запросы в DBeaver.
-
 SELECT '--- 1. Top-10 products by revenue ---' AS hdr;
 SELECT * FROM reports.report_products ORDER BY sales_rank LIMIT 10;
 
